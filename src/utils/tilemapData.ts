@@ -7,7 +7,7 @@ export default (width: number, height: number, tileSize: number): Array<Array<nu
   for (let i = 0; i <= horizontal; i++) {
     const arr = []
     for (let j = 0; j <= vertical; j++) {
-      arr.push(1)
+      arr.push(0)
     }
     map.push(arr)
   }

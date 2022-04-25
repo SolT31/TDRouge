@@ -1,54 +1,46 @@
+import { GameObjects, Scene } from 'phaser'
+export default class Tower {
+  #range: GameObjects.Arc
+  #image: GameObjects.Image
+  #scene: Scene
 
-import Phaser from 'phaser'
+  #fireRate = 1000;
+  #nextFire = 0;
 
-type Position = {
-  x: number,
-  y: number
-}
-
-class Tower {
-  #position: Position
-  #range: Phaser.GameObjects.Arc
-  #sprite: Phaser.GameObjects.Arc
-
-  constructor (scene: Phaser.Scene, x: number, y: number) {
-    console.log(scene)
-
-    this.#position = { x, y }
-
-    // Разобраться почему не работает
-    // this.#sprite = new Phaser.GameObjects.Arc(scene, x - 10, y - 10, 20, 0x6666ff)
-    // scene.add.existing(this.#sprite)
-
-    this.#sprite = scene.add.circle(x, y, 20, 0x6666ff)
-    this.#range = scene.add.circle(x, y, 100)
-    scene.add.circle(x, y, 20, 0x6666ff)
-
-    console.log(this.#sprite)
-
-    // scene.sys.displayList.add(this.#sprite)
-    // scene.sys.updateList.add(this.#sprite)
+  constructor (scene: Scene, x: number, y: number, sprite: string) {
+    this.#scene = scene
+    this.#image = this.#scene.add.image(x, y, sprite)
+    this.#range = this.#scene.add.circle(x, y, 100)
   }
 
-  intersecting (enemyArray: Array<Phaser.GameObjects.Shape>): Array<Phaser.GameObjects.Shape> {
-    return enemyArray.filter(e => Phaser.Geom.Intersects.CircleToCircle(this.#range, e))
+  overlap () {
+    return this.#scene.physics
+      .overlapCirc(this.#range.x, this.#range.y, this.#range.radius, true, true)
+  }
+
+  fire () {
+    return this.#scene.physics.add.image(this.#image.x, this.#image.y, 'fireball')
+  }
+
+  get range () {
+    return this.#range
   }
 
   get x () {
-    return this.#position.x
+    return this.#image.x
   }
 
   set x (val) {
-    this.#position.x = val
+    this.#image.x = val
+    this.#range.x = val
   }
 
   get y () {
-    return this.#position.y
+    return this.#image.y
   }
 
   set y (val) {
-    this.#position.y = val
+    this.#image.x = val
+    this.#range.x = val
   }
 }
-
-export default Tower
