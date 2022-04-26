@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 
-class Bullet extends Phaser.Physics.Arcade.Sprite {
+class Bullet extends Phaser.Physics.Arcade.Image {
   #scene
   #currentEnemy = null
 
@@ -18,8 +18,6 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
   }
 
   preUpdate (time, delta) {
-    super.preUpdate(time, delta)
-
     if (this.#currentEnemy) {
       const enemy = this.#currentEnemy
 
@@ -39,6 +37,7 @@ class Bullets extends Phaser.Physics.Arcade.Group {
   fireRate = 500;
   nextFire = 0;
   #time = 0
+  // active = true
 
   constructor (scene) {
     super(scene.physics.world, scene)
