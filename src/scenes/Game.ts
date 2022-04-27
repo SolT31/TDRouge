@@ -7,7 +7,7 @@ import SpriteDirt from '@/assets/dirt1.png.preview.jpg'
 import SpriteFireball from '@/assets/fireball.png'
 import SpriteTower from '@/assets/tower.png'
 
-import Tower from '@/units/TowerContainer'
+import Tower from '@/units/Tower'
 
 import FireBalls from '@/shells/FireBall'
 
@@ -47,19 +47,9 @@ export default class Demo extends Phaser.Scene {
     const tileSet = map.addTilesetImage('Dirt')
     map.createLayer(0, tileSet, 0, 0)
 
-    // this.bullets = new FireBalls(this)
-
     tower = new Tower(this, width / 2, height / 2, {
       weapon: new FireBalls(this)
     })
-
-    // const arc = new Phaser.GameObjects.Arc(this, 0, 0, 300).setStrokeStyle(2, 0xffff00)
-
-    // this.add.existing(arc)
-
-    // const sprite = new Phaser.Physics.Arcade.Image(this, 100, 100, 'tower')
-    // const arc = new Phaser.GameObjects.Arc(this, 0, 0, 100).setStrokeStyle(2, 0xffff00)
-
     this.add.existing(tower)
 
     enemy = this.physics.add.image(100, 100, 'enemy')
@@ -83,18 +73,5 @@ export default class Demo extends Phaser.Scene {
     enemy.setPosition(enemy.x + offset, enemy.y)
 
     tower.overlap()
-
-    // const bodies = tower.overlap()
-
-    // const enemiesBodies = bodies.filter(e => e.gameObject.state === 'enemy')
-
-    // if (bodies.length) {
-    //   this.pause = true
-    //   console.log(bodies[0])
-    // }
-
-    // if (enemiesBodies.length) {
-    //   this.bullets.fireBullet(enemiesBodies[0].gameObject, time)
-    // }
   }
 }
