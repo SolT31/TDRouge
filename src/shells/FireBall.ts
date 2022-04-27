@@ -1,10 +1,11 @@
-import Phaser from 'phaser'
+import { Scene, Physics, Math } from 'phaser'
+import { Weapon } from './types'
 
-class Bullet extends Phaser.Physics.Arcade.Image {
+class FireBall extends Physics.Arcade.Image {
   #scene
   #currentEnemy = null
 
-  constructor (scene, x, y) {
+  constructor (scene: Scene, x: number, y: number) {
     super(scene, x, y, 'fireball')
     this.#scene = scene
   }
@@ -13,19 +14,22 @@ class Bullet extends Phaser.Physics.Arcade.Image {
     this.#currentEnemy = enemy
 
     this.body.reset(400, 300)
+    const angle = Math.Angle.Between(this.x, this.y, enemy.x, enemy.y)
+    this.setAngle(Math.RadToDeg(angle))
+
     this.setActive(true)
     this.setVisible(true)
   }
 
-  preUpdate (time, delta) {
+  preUpdate () {
     if (this.#currentEnemy) {
       const enemy = this.#currentEnemy
 
-      const angle = Phaser.Math.Angle.Between(this.x, this.y, enemy.x, enemy.y)
-      this.setAngle(Phaser.Math.RadToDeg(angle))
-      this.#scene.physics.moveToObject(this, enemy, 100)
+      const angle = Math.Angle.Between(this.x, this.y, enemy.x, enemy.y)
+      this.setAngle(Math.RadToDeg(angle))
+      this.#scene.physics.moveToObject(this, enemy, 200)
 
-      this.#scene.physics.overlap(this, enemy, (a) => {
+      this.#scene.physics.overlap(this, enemy.gameObject, () => {
         this.setActive(false)
         this.setVisible(false)
       })
@@ -33,31 +37,31 @@ class Bullet extends Phaser.Physics.Arcade.Image {
   }
 }
 
-class Bullets extends Phaser.Physics.Arcade.Group {
-  fireRate = 500;
+class FireBalls extends Physics.Arcade.Group implements Weapon {
+  #scene: Scene
+  fireRate = 300;
   nextFire = 0;
-  #time = 0
-  // active = true
 
-  constructor (scene) {
+  constructor (scene: Scene) {
     super(scene.physics.world, scene)
+    this.#scene = scene
 
     this.createMultiple({
       frameQuantity: 5,
       key: 'bullet',
       active: false,
       visible: false,
-      classType: Bullet
+      classType: FireBall
     })
   }
 
-  fireBullet (enemy, time) {
-    if (time < this.nextFire) return
-    this.nextFire = time + this.fireRate
+  fire (enemy) {
+    if (this.#scene.time.now < this.nextFire) return
+    this.nextFire = this.#scene.time.now + this.fireRate
 
     const bullet = this.getFirstDead(false)
     if (bullet) bullet.fire(enemy)
   }
 }
 
-export default Bullets
+export default FireBalls

@@ -4,18 +4,23 @@ export default class Tower {
   #image: GameObjects.Image
   #scene: Scene
 
-  #fireRate = 1000;
-  #nextFire = 0;
-
   constructor (scene: Scene, x: number, y: number, sprite: string) {
     this.#scene = scene
     this.#image = this.#scene.add.image(x, y, sprite)
-    this.#range = this.#scene.add.circle(x, y, 100)
+    this.#range = this.#scene.add.circle(x, y, 200)
+
+    this.geom = new Phaser.Geom.Circle(x, y, 200)
   }
 
-  overlap () {
-    return this.#scene.physics
-      .overlapCirc(this.#range.x, this.#range.y, this.#range.radius, true, true)
+  overlap (enemies) {
+    console.log()
+
+    this.#scene.physics.overlap(this.geom, enemies, () => {
+      console.log('overlap')
+    })
+
+    // return this.#scene.physics
+    //   .overlapCirc(this.#range.x, this.#range.y, this.#range.radius, false, false)
   }
 
   fire () {
