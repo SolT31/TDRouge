@@ -1,4 +1,4 @@
-import { Scene, Physics } from 'phaser'
+import { Scene, Physics, GameObjects } from 'phaser'
 import { Weapon } from '../shells/types'
 
 type Options = {
@@ -6,28 +6,45 @@ type Options = {
   weapon?: Weapon
 }
 
-export default class Tower extends Physics.Arcade.Image {
-  #weapon: Weapon | null = null
-  #scene: Scene
-  #range: number
+export class TowerObject extends Physics.Arcade.Image {
+  constructor (scene: Scene, x: number, y: number, sprite: string) {
+    super(scene, x, y, sprite)
+    this.state = 'enemy'
+    scene.physics.add.existing(this)
+    scene.add.existing(this)
+    this.body.setCircle(32, 0, 0)
+  }
+}
 
-  constructor (scene: Scene, x: number, y: number, { range = 200, weapon }: Options) {
-    super(scene, x, y, 'tower')
+export class Range extends GameObjects.Zone {
+  constructor (scene: Scene, x: number, y: number, radius: number) {
+    super(scene, x, y, radius * 2, radius * 2)
+    this.body = new Physics.Arcade.Body(scene.physics.world, this)
+    this.body.setCircle(radius)
+    scene.physics.add.existing(this)
+  }
+}
 
-    this.#range = range
-    this.#scene = scene
-    this.#weapon = weapon || null
+export default class Tower extends GameObjects.Container {
+  #object: TowerObject
+  #range: Range
+  #weapon: Weapon | undefined
+
+  constructor (scene: Scene, x: number, y: number, sprite: string, opts: Options = {}) {
+    super(scene, x, y)
+
+    this.#object = new TowerObject(scene, x, y, sprite)
+    this.#range = new Range(scene, x, y, 150)
+    this.#weapon = opts.weapon
+
+    this.add([this.#object, this.#range])
+    scene.add.existing(this)
   }
 
-  overlap () {
-    const bodies = this.#scene.physics.overlapCirc(this.x, this.y, this.#range, true, true)
-
-    const enemiesBodies = bodies.filter((e: Physics.Arcade.Body) => {
-      return e.gameObject.state === 'enemy'
+  observe (enemies) {
+    this.scene.physics.overlap(enemies, this.#range, (enemy) => {
+      // console.log(enemy)
+      this.#weapon?.fire(enemy)
     })
-
-    if (this.#weapon && enemiesBodies.length) {
-      this.#weapon.fire(enemiesBodies[0])
-    }
   }
 }

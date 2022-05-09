@@ -14,6 +14,9 @@ class FireBall extends Physics.Arcade.Image {
     this.#currentEnemy = enemy
 
     this.body.reset(400, 300)
+
+    this.body.setCircle(10, 20, 5)
+
     const angle = Math.Angle.Between(this.x, this.y, enemy.x, enemy.y)
     this.setAngle(Math.RadToDeg(angle))
 
@@ -25,11 +28,11 @@ class FireBall extends Physics.Arcade.Image {
     if (this.#currentEnemy) {
       const enemy = this.#currentEnemy
 
-      const angle = Math.Angle.Between(this.x, this.y, enemy.x, enemy.y)
+      const angle = Math.Angle.Between(this.body.x, this.body.y, enemy.x, enemy.y)
       this.setAngle(Math.RadToDeg(angle))
-      this.#scene.physics.moveToObject(this, enemy, 200)
+      this.#scene.physics.moveTo(this, enemy.x, enemy.y, 200)
 
-      this.#scene.physics.overlap(this, enemy.gameObject, () => {
+      this.#scene.physics.overlap(this, enemy, () => {
         this.setActive(false)
         this.setVisible(false)
       })

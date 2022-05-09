@@ -48,14 +48,10 @@ export default class Demo extends Phaser.Scene {
     const tileSet = map.addTilesetImage('Dirt')
     map.createLayer(0, tileSet, 0, 0)
 
-    tower = new Tower(this, width / 2, height / 2, {
+    tower = new Tower(this, 200, 135, 'tower', {
       weapon: new FireBalls(this)
     })
-    this.add.existing(tower)
-
     enemy = new Enemy(this, 100, 100, 'enemy')
-
-    this.add.existing(enemy)
 
     enemies.push(enemy)
   }
@@ -74,6 +70,6 @@ export default class Demo extends Phaser.Scene {
     const offset = direction === Direction.Left ? -ENEMY_SPEED : ENEMY_SPEED
     enemy.setPosition(enemy.x + offset, enemy.y)
 
-    tower.overlap()
+    tower.observe(enemies)
   }
 }

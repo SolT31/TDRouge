@@ -5,6 +5,7 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
     super(scene, x, y, sprite)
     this.state = 'enemy'
     scene.physics.add.existing(this)
+    scene.add.existing(this)
     this.body.setCircle(25, 10, 10)
   }
 }
