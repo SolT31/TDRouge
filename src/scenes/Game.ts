@@ -8,6 +8,7 @@ import SpriteFireball from '@/assets/fireball.png'
 import SpriteTower from '@/assets/tower.png'
 
 import Tower from '@/units/Tower'
+import Enemy from '@/units/Enemy'
 
 import FireBalls from '@/shells/FireBall'
 
@@ -16,7 +17,7 @@ enum Direction {
   Right = 'right'
 }
 
-let enemy: Phaser.GameObjects.Image
+let enemy: Enemy
 
 let tower: Tower
 let direction: Direction = Direction.Right
@@ -52,8 +53,9 @@ export default class Demo extends Phaser.Scene {
     })
     this.add.existing(tower)
 
-    enemy = this.physics.add.image(100, 100, 'enemy')
-    enemy.state = 'enemy'
+    enemy = new Enemy(this, 100, 100, 'enemy')
+
+    this.add.existing(enemy)
 
     enemies.push(enemy)
   }

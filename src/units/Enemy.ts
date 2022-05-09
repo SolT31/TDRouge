@@ -1,11 +1,10 @@
-import { GameObjects, Scene } from 'phaser'
+import Phaser from 'phaser'
 
-export default class Enemy {
-  #scene: Scene
-  #image: GameObjects.Image
-
-  constructor (scene: Scene, x: number, y: number, sprite: string) {
-    this.#scene = scene
-    this.#image = this.#scene.add.image(x, y, sprite)
+export default class Enemy extends Phaser.Physics.Arcade.Sprite {
+  constructor (scene: Phaser.Scene, x: number, y: number, sprite: string) {
+    super(scene, x, y, sprite)
+    this.state = 'enemy'
+    scene.physics.add.existing(this)
+    this.body.setCircle(25, 10, 10)
   }
 }
