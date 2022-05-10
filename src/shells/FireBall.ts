@@ -1,5 +1,6 @@
 import { Scene, Physics, Math } from 'phaser'
 import { Weapon } from './types'
+import Tower from '@/units/Tower'
 
 class FireBall extends Physics.Arcade.Image {
   #scene
@@ -8,14 +9,17 @@ class FireBall extends Physics.Arcade.Image {
   constructor (scene: Scene, x: number, y: number) {
     super(scene, x, y, 'fireball')
     this.#scene = scene
+    
+    this.width = 20
+    this.height = 20
+    this.x = 100
+
+    console.log(this)
   }
 
-  fire (enemy) {
+  fire (enemy, x, y) {
     this.#currentEnemy = enemy
-
-    this.body.reset(400, 300)
-
-    this.body.setCircle(10, 20, 5)
+    this.body.reset(x, y)
 
     const angle = Math.Angle.Between(this.x, this.y, enemy.x, enemy.y)
     this.setAngle(Math.RadToDeg(angle))
@@ -42,19 +46,29 @@ class FireBall extends Physics.Arcade.Image {
 
 class FireBalls extends Physics.Arcade.Group implements Weapon {
   #scene: Scene
+  #tower: Tower
+
   fireRate = 300;
   nextFire = 0;
 
-  constructor (scene: Scene) {
+  constructor (scene: Scene, tower: Tower) {
     super(scene.physics.world, scene)
     this.#scene = scene
+    this.#tower = tower
 
     this.createMultiple({
       frameQuantity: 5,
-      key: 'bullet',
+      key: 'fireball',
       active: false,
       visible: false,
       classType: FireBall
+    })
+
+    this.children.each(element => {
+      const body = element.body as Physics.Arcade.Body
+      const { x, y } = this.#tower
+      body.setCircle(10, 0, 0)
+      body.reset(x, y)
     })
   }
 
@@ -63,7 +77,10 @@ class FireBalls extends Physics.Arcade.Group implements Weapon {
     this.nextFire = this.#scene.time.now + this.fireRate
 
     const bullet = this.getFirstDead(false)
-    if (bullet) bullet.fire(enemy)
+    if (bullet) {
+      const { x, y } = this.#tower
+      bullet.fire(enemy, x, y)
+    }
   }
 }
 

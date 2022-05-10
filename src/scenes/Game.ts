@@ -48,10 +48,9 @@ export default class Demo extends Phaser.Scene {
     const tileSet = map.addTilesetImage('Dirt')
     map.createLayer(0, tileSet, 0, 0)
 
-    tower = new Tower(this, 200, 135, 'tower', {
-      weapon: new FireBalls(this)
-    })
-    enemy = new Enemy(this, 100, 100, 'enemy')
+    enemy = new Enemy(this, 100, 150, 'enemy')
+
+    tower = new Tower(this, 350, 300, 'tower', { Weapon: FireBalls })
 
     enemies.push(enemy)
   }
